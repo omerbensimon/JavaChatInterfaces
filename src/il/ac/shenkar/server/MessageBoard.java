@@ -34,6 +34,6 @@ public class MessageBoard implements StringConsumer, StringProducer {
 
     @Override
     public void removeConsumer(StringConsumer sc) {
-        // TODO: Ask מרצה what to put here
+
     }
 }
