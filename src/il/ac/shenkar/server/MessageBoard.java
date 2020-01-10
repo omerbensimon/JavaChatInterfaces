@@ -4,10 +4,7 @@ import il.ac.shenkar.common.ConnectionProxy;
 import il.ac.shenkar.common.StringConsumer;
 import il.ac.shenkar.common.StringProducer;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.ListIterator;
 
 public class MessageBoard implements StringConsumer, StringProducer {
     LinkedList<ConnectionProxy> _consumers;
@@ -19,7 +16,14 @@ public class MessageBoard implements StringConsumer, StringProducer {
 
     @Override
     public void consume(String message) {
-        for (ConnectionProxy tempCon : _consumers) {
+        ConnectionProxy tempCon;
+        for (int i = 0; i < _consumers.size(); i++) {
+            tempCon = _consumers.get(i);
+            if (tempCon.isClosed()) {
+                _consumers.remove(tempCon);
+                i--;
+                continue;
+            }
             tempCon.consume(message);
         }
     }
@@ -29,7 +33,6 @@ public class MessageBoard implements StringConsumer, StringProducer {
         if (sc instanceof ConnectionProxy) {
             _consumers.add((ConnectionProxy) sc);
         }
-        //TODO: err
     }
 
     @Override

@@ -16,7 +16,7 @@ public class ServerApplication {
         ConnectionProxy connection = null;
         ClientDescriptor client = null;
         try {
-            server = new ServerSocket(1300, 5);
+            server = new ServerSocket(serverPortNumber, 5);
             System.out.println("server socket was created successfully");
         } catch (IOException e) {
             System.out.println("prob with creating the server socket object");
@@ -30,6 +30,7 @@ public class ServerApplication {
                 client.addConsumer(mb);
                 mb.addConsumer(connection);
                 connection.start();
+                System.out.println("Received connection from client");
             } catch (IOException e) {
                 e.printStackTrace();
             }

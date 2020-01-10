@@ -3,10 +3,8 @@ package il.ac.shenkar.server;
 import il.ac.shenkar.common.StringConsumer;
 import il.ac.shenkar.common.StringProducer;
 
-public class ClientDescriptor implements StringConsumer, StringProducer
-{
+public class ClientDescriptor implements StringConsumer, StringProducer {
     private MessageBoard _msgBoard;
-
 
     @Override
     public void consume(String str) {
@@ -15,12 +13,11 @@ public class ClientDescriptor implements StringConsumer, StringProducer
 
     @Override
     public void addConsumer(StringConsumer sc) {
-        if (_msgBoard != null){
-            // ERROR
+        if (_msgBoard != null) {
             System.out.println("There is no message");
             return;
         }
-        if (sc instanceof MessageBoard){
+        if (sc instanceof MessageBoard) {
             _msgBoard = (MessageBoard) sc;
         }
     }

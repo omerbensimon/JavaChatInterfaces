@@ -1,6 +1,7 @@
 package il.ac.shenkar.common;
 
 import il.ac.shenkar.client.ClientGUI;
+import il.ac.shenkar.server.ClientDescriptor;
 
 import java.io.*;
 import java.net.Socket;
@@ -24,22 +25,11 @@ public class ConnectionProxy extends Thread implements StringConsumer, StringPro
                 System.out.println("received: " + received);
                 _consumer.consume(received);
             } catch (IOException e) {
+                if (!isClosed()) {
+                    close();
+                }
                 e.printStackTrace();
-            } finally {
-                if (_socket != null) {
-                    try {
-                        _socket.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (dataInputStream != null) {
-                    try {
-                        dataInputStream.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+                return;
             }
         }
 
@@ -47,11 +37,10 @@ public class ConnectionProxy extends Thread implements StringConsumer, StringPro
 
     @Override
     public void addConsumer(StringConsumer sc) {
-        // Make sure it's ClientDescriptor or ClientGUI
-        if (sc instanceof ConnectionProxy || sc instanceof ClientGUI) {
+        if (sc instanceof ClientDescriptor || sc instanceof ClientGUI) {
             _consumer = sc;
         }
-        // TODO err
+        System.err.println("Incompatible type of consumer: " + sc.getClass());
     }
 
     @Override
@@ -61,7 +50,6 @@ public class ConnectionProxy extends Thread implements StringConsumer, StringPro
 
     @Override
     public void consume(String str) {
-        // Pass it through the socket connection
         DataOutputStream dataOutputStream = null;
         try {
             dataOutputStream = new DataOutputStream(_socket.getOutputStream());
@@ -71,15 +59,11 @@ public class ConnectionProxy extends Thread implements StringConsumer, StringPro
         } catch (IOException e) {
             System.err.println("Failed to send message using connection proxy");
             e.printStackTrace();
-        } finally {
-            if (dataOutputStream != null) {
-                try {
-                    dataOutputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
+    }
+
+    public boolean isClosed() {
+        return _socket.isClosed();
     }
 
     public void close() {
